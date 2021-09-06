@@ -1,0 +1,78 @@
+{% comment %}
+    Renders a product card using "Grid" style
+    Accepts:
+    - max_height: {Number} Maximum height of the product's image (required)
+    - product: {Object} Product Liquid object (required)
+    - show_vendor: {Boolean} Show the product's vendor depending on the section setting (optional)
+
+    Usage:
+    {% include 'product-card-grid-new-1', max_height: max_height, product: product, show_vendor: section.settings.show_vendor %}
+{% endcomment %}
+<div class="one-half left set-margin1 grid-view-item{% unless product.available %} grid-view-item--sold-out{% endunless %} product-card">
+  <a class="grid-view-item__link grid-view-item__image-container full-width-link" href="{{ product.url | within: collection }}">
+    <span class="visually-hidden">{{ product.title }}</span>
+  </a>
+
+  {% capture img_id %}ProductCardImage-{{ section.id }}-{{ product.id }}{% endcapture %}
+  {% capture wrapper_id %}ProductCardImageWrapper-{{ section.id }}-{{ product.id }}{% endcapture %}
+  {%- assign preview_image = product.featured_media.preview_image -%}
+  {%- assign img_url = preview_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+  
+  {% case block.settings.width %}
+    {% when '25%' %}
+      {%- assign max_height = 250 -%}
+      {%- assign block_width = 'medium-up--one-quarter' -%}
+      {%- assign block_width_mobile = 'small--one-half' -%}
+    {% when '33%' %}
+      {%- assign max_height = 345 -%}
+      {%- assign block_width = 'medium-up--one-third' -%}
+      {%- assign block_width_mobile = 'small--one-half' -%}
+    {% when '50%' %}
+      {%- assign max_height = 530 -%}
+      {%- assign block_width = 'medium-up--one-half' -%}
+      {%- assign block_width_mobile = 'small--one-half' -%}
+    {% when '66%' %}
+      {%- assign max_height = 720 -%}
+      {%- assign block_width = 'two-thirds' -%}
+    {% when '75%' %}
+      {%- assign max_height = 810 -%}
+      {%- assign block_width = 'three-quarters' -%}
+    {% when '100%' %}
+      {%- assign max_height = 1090 -%}
+      {%- assign block_width = 'one-whole' -%}
+  {% endcase %}
+
+  {% unless preview_image == blank %}
+    {% include 'image-style-new', image: preview_image, height: max_height, wrapper_id: wrapper_id, img_id: img_id %}
+  {% endunless %}
+
+  <div class="product-card__image-with-placeholder-wrapper" data-image-loading-animation>
+    <div id="{{ wrapper_id }}" class="grid-view-item__image-wrapper product-card__image-wrapper js">
+      <div style="padding-top:100%">
+        <img id="{{ img_id }}"
+              class="grid-view-item__image lazyload"
+              alt="{{ preview_image.alt }}"
+              data-src="{{ img_url }}"
+              data-widths="[180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+              data-aspectratio="{{ preview_image.aspect_ratio }}"
+              data-sizes="auto"
+              data-image>
+      </div>
+    </div>
+  </div>
+
+  <noscript>
+    {% capture image_size %}{{ max_height }}x{{ max_height }}{% endcapture %}
+    <img class="grid-view-item__image" src="{{ preview_image | img_url: image_size, scale: 2 }}" alt="{{ preview_image.alt }}" style="max-width: {{ max_height | times: preview_image.aspect_ratio }}px;">
+  </noscript>
+
+  {% if section.settings.show_title %}
+    <div class="h4 grid-view-item__title product-card__title" aria-hidden="true">{{ product.title }}</div>
+  {% endif %}
+
+  {% if section.settings.show_price %}
+    {% include 'product-price-listing', product: product, show_vendor: show_vendor %}
+  {% endif %}
+
+
+</div>

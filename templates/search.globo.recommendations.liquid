@@ -1,0 +1,6 @@
+{%- layout none -%}
+{%- if search.terms == 'data' -%}
+{%- assign tags = '' -%}{"collections":[{%- for collection in collections -%}{"id":"{{-collection.id-}}","handle":"{{-collection.handle-}}","title":{{collection.title | json}},"image":{%- if collection.image -%}{{- collection.image | img_url: '100x' | json -}}{%- else -%}null{%- endif -%}}{%- unless forloop.last -%},{%- endunless -%}{%- if collection.all_tags.size > 0 -%}{%- for tag in collection.all_tags -%}{%- unless tags contains tag -%}{%- if tags != '' -%}{%- assign tags = tags | join: ',' -%}{%- assign tags = tags | append: ',' | append: tag -%}{%- else -%}{%- assign tags = tags | append: tag -%}{%- endif -%}{%- assign tags = tags | split: ',' -%}{%- endunless -%}{%- endfor -%}{%- endif -%}{%- endfor -%}],"vendors":{{shop.vendors | json}},"types":{{shop.types | json}},"tags":{{ tags | json }}}
+{%- else -%}
+{%- if search.results_count > 0 -%}{%- paginate search.results by 30 -%}[{%- for product in search.results -%}{{-product | json-}}{%- unless forloop.last -%},{%-endunless-%}{%- endfor -%}]{%- endpaginate -%}{%- else -%}[]{%- endif -%}
+{%- endif -%}

@@ -1,0 +1,48 @@
+{% comment %}
+  Renders a product card using "Grid" style
+  Accepts:
+  - max_height: {Number} Maximum height of the product's image (required)
+  - product: {Object} Product Liquid object (required)
+  - show_vendor: {Boolean} Show the product's vendor depending on the section setting (optional)
+
+  Usage:
+  {% include 'product-card-grid-new', max_height: max_height, product: product, show_vendor: section.settings.show_vendor %}
+{% endcomment %}
+ {% unless grid_image_width %} 
+   {%- assign grid_image_width = '600x600' -%} 
+ {% endunless %} 
+ <div class="category-list">
+   <div class="grid-view-item{% unless product.available %} product-price--sold-out grid-view-item--sold-out{% endunless %}"> 
+     <div class="collection-search-icon">       
+          {% include 'search-icon' %}
+     </div>
+     <a href="{{product.url | within: collection }}">
+       <div class="collection-bag-icon">
+        {% include 'bag-icon' %}
+       </div>
+     </a>
+     <a class="grid-view-item__link {% if product.images.size > 1 %} has-secondary{% endif %}" href="{{ product.url | within: collection }}"> 
+       <span class="product-collection-img">
+         <span class="collection-product-static">
+          <img class="grid-view-item__image" src="{{ product.featured_image.src | img_url: grid_image_width }}" alt="{{ product.featured_image.alt }}"> 
+         </span>
+         {% if product.images.size > 1 %} 
+         <span class="collection-product-hover">
+          <img class="secondary" src="{{ product.images.last | img_url: grid_image_width }}" alt="{{ product.images.last.alt | escape }}"> 
+         </span>
+         {% endif %} 
+       </span>
+       {% if section.settings.show_title %}
+       <div class="h4 grid-view-item__title product-card__title" aria-hidden="true">{{ product.title }}</div>
+       {% endif %}
+
+       {% if section.settings.show_price %}
+       {% include 'product-price-listing', product: product, show_vendor: show_vendor %}
+       {% endif %}
+
+       {% if section.settings.show_look_at_button %}
+       <a href="{{product.url | within: collection }}" class="btn blue-btn">ansehen</a>
+       {% endif %}
+     </a> 
+   </div> 
+  </div>

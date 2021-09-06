@@ -1,0 +1,33 @@
+<style>
+  {%- if image.height <= height %}
+    {% assign maximum_height = image.height %}
+  {% else %}
+    {% assign maximum_height = height %}
+  {% endif -%}
+
+  {%- assign maximum_width = maximum_height | times: image.aspect_ratio -%}
+
+  #{{ img_id }} {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
+
+  #{{ wrapper_id }} {
+    max-width: 100%;
+  }
+</style>
+
+{% if section.settings.product_image == 'full' %}
+<style>
+  #{{ img_id }} {
+    object-fit: contain;
+  }
+  .product-card__image-with-placeholder-wrapper #{{ wrapper_id }} div{
+    padding-top: 0px !important;
+  }
+  .grid-view-item__image-wrapper .grid-view-item__image{
+    position: unset;
+  }
+</style>
+{% endif %}

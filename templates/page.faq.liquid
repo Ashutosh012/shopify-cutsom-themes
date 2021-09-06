@@ -1,0 +1,28 @@
+<div class="faq-page-main">
+{% section 'hero-faq-new' %}
+{% section 'faq-section-1' %}
+{% section 'faq-section-2' %}
+{% section 'faq-section-3' %}
+{% section 'faq-text-section' %}
+</div>
+
+<style>
+  .main-content{
+    padding-top: 0px;
+  }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+(function() {
+  $('body').on('click', '.shopify_explorer_faq__question', function() {
+    $(this).next('.shopify_explorer_faq__answer').slideToggle(150).toggleClass('active');
+    $(this).toggleClass('active');
+  });
+  $(document).on('shopify:block:select', '#shopify-section-page-shopify_explorer_faq-template', function(event) {
+    $(event.target).find('.shopify_explorer_faq__answer').slideDown(150);
+  });
+  $(document).on('shopify:block:deselect', '#shopify-section-page-shopify_explorer_faq-template', function(event) {
+    $(event.target).find('.shopify_explorer_faq__answer').slideUp(150);
+  });
+}());
+</script>

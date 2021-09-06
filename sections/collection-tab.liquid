@@ -1,0 +1,247 @@
+{%- assign product_limit = section.settings.grid | times: section.settings.rows -%}
+
+{% case section.settings.grid %}
+  {% when 2 %}
+    {%- assign max_height = 530 -%}
+    {%- assign grid_item_width = 'medium-up--one-half' -%}
+  {% when 3 %}
+    {%- assign max_height = 345 -%}
+    {%- assign grid_item_width = 'small--one-half medium-up--one-third' -%}
+  {% when 4 %}
+    {%- assign max_height = 250 -%}
+    {%- assign grid_item_width = 'small--one-half medium-up--one-quarter' -%}
+  {% when 5 %}
+    {%- assign max_height = 195 -%}
+    {%- assign grid_item_width = 'small--one-half medium-up--one-fifth' -%}
+{% endcase %}
+
+
+<div class="page-width">
+  
+{% if section.settings.title != blank %}
+  <div class="section-header text-center">
+    <h2>{{ section.settings.title | escape }}</h2>
+  </div>
+{% endif %}
+  
+  <div class="tabs">
+    <ul id="tabs-nav">
+    {%- if section.blocks.size > 0 -%}
+    {%- if section.blocks.size == 1 -%}
+      {%- assign collection = collections[section.blocks[0].settings.collection] -%}
+      <li class="featured-collections-tab__item featured-collections-tab__item--active featured-collections-tab__item--single" id="{{ block.id }}-tab" data-featured-collections-selected-tab {{ section.blocks[0].shopify_attributes }}>
+        {%- if collection == blank -%}
+            <span class="featured-collections__item-title">{{- 'homepage.onboarding.collection_title' | t -}}</span>
+        {%- else -%}
+          <span class="featured-collections__item-title">{{- collection.title | escape -}}</span>
+        {%- endif -%}
+      </li>
+    {%- else -%}
+      {%- for block in section.blocks -%}
+        {%- assign collection = collections[block.settings.collection] -%}
+        <li><a
+          id="{{ block.id }}-tab"
+          href="#{{ forloop.index0 }}-tab"
+          data-collection-title="{{ collection.title }}"
+          data-featured-collections-tab-number="{{ forloop.index0 }}"
+          data-featured-collections-block-id="{{ block.id }}"
+          {{ block.shopify_attributes }}>
+          {%- if collection == blank -%}
+            <span class="featured-collections__item-title">{{- 'homepage.onboarding.collection_title' | t -}}</span>
+          {%- else -%}
+            <span class="featured-collections__item-title">{{- collection.title | escape -}}</span>
+          {%- endif -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endif -%}
+    </ul> <!-- END tabs-nav -->
+  <br>
+  <div id="tabs-content">
+    {%- for block in section.blocks -%}
+      <div id="{{ forloop.index0 }}-tab" class="tab-content">
+      {%- assign collection = collections[block.settings.collection] -%}
+        <ul class="grid grid--uniform grid--view-items">
+        {% for product in collection.products limit: product_limit %}
+          <li class="grid__item grid__item--{{section.id}} {{ grid_item_width }}">
+            {% include 'product-card-grid-new', max_height: max_height, product: product, show_vendor: section.settings.show_vendor %}
+          </li>
+        {% else %}
+            {% for i in (1..product_limit) %}
+              <li class="grid__item grid__item--{{section.id}} {{ grid_item_width }}">
+                <div class="grid-view-item product-card">
+                  <a class="grid-view-item__link grid-view-item__image-container full-width-link" href="#">
+                    <span class="visually-hidden">{{ 'homepage.onboarding.product_title' | t }}</span>
+                  </a>
+                  <div class="grid-view-item__image-wrapper">
+                    {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                    {{ 'product-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                  {% if section.settings.show_title %}
+                    <div class="h4 grid-view-item__title" aria-hidden="true">{{ 'homepage.onboarding.product_title' | t }}</div>
+                  {% endif %}
+                  {% if section.settings.show_price %}
+                    {% include 'product-price' %}
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+  </div> <!-- END tabs-content -->
+  </div> <!-- END tabs -->
+</div>
+
+
+
+
+<style>
+ /* Tabs */
+.tabs {
+}
+ul#tabs-nav {
+  list-style: none;
+  margin: 0;
+  padding: 5px;
+  overflow: auto;
+  text-align: center;
+}
+ul#tabs-nav li {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 10px;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+}
+ul#tabs-nav li:hover,
+ul#tabs-nav li.active {
+  border-bottom: 4px solid {{ section.settings.bdr_clr }};
+}
+#tabs-nav li a {
+  text-decoration: none;
+}
+.tab-content {
+  padding: 10px;
+}
+
+  @media (min-width: 320px) and (max-width: 480px) {
+    ul#tabs-nav li{
+      display: block;
+      margin: 10px 0px;
+      padding-bottom: 0px;
+      padding: 10px;
+    }
+    ul#tabs-nav li:hover,
+    ul#tabs-nav li.active {
+      border-bottom: none;
+      border: 2px solid {{ section.settings.bdr_clr }};
+    }
+  }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+// Show the first tab and hide the rest
+$('#tabs-nav li:first-child').addClass('active');
+$('.tab-content').hide();
+$('.tab-content:first').show();
+
+// Click function
+$('#tabs-nav li').click(function(){
+  $('#tabs-nav li').removeClass('active');
+  $(this).addClass('active');
+  $('.tab-content').hide();
+  
+  var activeTab = $(this).find('a').attr('href');
+  $(activeTab).fadeIn();
+  return false;
+});
+</script>
+
+{% schema %}
+{
+  "name": "Collection tab",
+  "class": "index-section",
+  "settings": [
+	{
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collection Tab"
+    },
+    {
+      "type": "range",
+      "id": "grid",
+      "label": "Products per row",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "rows",
+      "label": "Rows",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 2
+    },
+	{
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show product title",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show product price",
+      "default": false
+    },
+	{
+      "type": "color",
+      "id": "bdr_clr",
+      "label": "Text",
+      "default": "#D19A62"
+    },
+	{
+      "type": "select",
+      "id": "product_image",
+      "label": "Product image",
+      "default": "square",
+      "options": [
+        {
+          "label": "Square",
+          "value": "square"
+        },
+        {
+          "label": "Full",
+          "value": "full"
+        }
+      ]
+    }
+  ],
+	"blocks": [
+    {
+      "type": "collection",
+      "name": "Add Collections",
+      "settings": [
+        {
+          "id": "collection",
+          "type": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection tab",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

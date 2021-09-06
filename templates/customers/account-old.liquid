@@ -1,0 +1,75 @@
+<div class="page-width">
+  <div class="section-header text-center">
+    <div class="account-tabs">
+    	<p class="tablinks-orders">{{ 'customer.account.tab_title_one' | t }}</p>
+    	<p class="tablinks-return">{{ 'customer.account.tab_title_two' | t }}</p>
+    </div>
+    <h1>{{ 'customer.account.title' | t }}</h1>
+    {{ 'layout.customer.log_out' | t | customer_logout_link }}
+  </div>
+  
+  <div class="grid myaccount">
+    <div class="user-return-section">
+      {% paginate customer.orders by 20 %}
+        {% if customer.orders.size != 0 %}
+          <table class="responsive-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'customer.orders.order_number' | t }}</th>
+                <th scope="col">{{ 'customer.orders.date' | t }}</th>
+                <th scope="col">{{ 'customer.orders.payment_status' | t }}</th>
+                <th scope="col">{{ 'customer.orders.fulfillment_status' | t }}</th>
+                <th scope="col">{{ 'customer.orders.total' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in customer.orders %}
+              <tr>
+                <th data-label="{{ 'customer.orders.order_number' | t }}" scope="row">
+                  <a href="{{ order.customer_url }}" class="btn btn--secondary btn--small" aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}">{{ order.name }}</a>
+                </th>
+                <td data-label="{{ 'customer.orders.date' | t }}">{{ order.created_at | time_tag: format: 'date' }}</td>
+                <td data-label="{{ 'customer.orders.payment_status' | t }}">{{ order.financial_status_label }}</td>
+                <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">{{ order.fulfillment_status_label }}</td>
+                <td data-label="{{ 'customer.orders.total' | t }}">{{ order.total_price | money }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <h3>{{ 'customer.account.no_orders_yet_description_one' | t }}</h3>
+          <h3>{{ 'customer.account.no_orders_yet_description_two' | t }}</h3>
+          <a href="/pages/shop" class="btn blue-btn">{{ 'customer.account.shop' | t }}</a>
+        {% endif%}
+      
+      	{%- if paginate.pages > 1 -%}
+          {% include 'pagination', paginate: paginate %}
+        {%- endif -%}
+      {% endpaginate %}
+    </div>
+    
+    <div class="user-return-section" style="display:none;">
+      {% if customer.orders.size == 0 %}
+        <h3>{{ 'customer.account.no_orders_yet_description_one' | t }}</h3>
+        <h3>{{ 'customer.account.no_orders_yet_description_two' | t }}</h3>
+        <a href="/pages/shop" class="btn blue-btn">{{ 'customer.account.shop' | t }}</a>
+      {% endif%}
+    </div>
+    
+    <script>
+      $(document).ready(function(){
+        $('p.tablinks-return').click(function(){
+          $('.grid.myaccount .user-return-section').css("display","block");
+        });
+      });
+    </script>
+  </div>
+    <div class="grid__item myaccount__account-details">
+      <h2>{{ 'customer.account.details' | t }}</h2>
+
+      {{ customer.default_address | format_address }}
+
+      <p><a href="{{ routes.account_addresses_url }}" class="btn btn--small">{{ 'customer.account.view_addresses' | t }} ({{ customer.addresses_count }})</a></p>
+    </div>
+  
+</div>

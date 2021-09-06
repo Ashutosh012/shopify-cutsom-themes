@@ -1,0 +1,108 @@
+<script type="text/javascript">
+  {%- assign assets_url = 'product-1.png' | asset_img_url: '50x' -%}
+  {%- assign assets_url = assets_url | split: 'product-1_50x.png' -%}
+  window.moneyFormat = "{{ shop.money_format | replace:'"',"'" }}";
+  window.shopCurrency = "{{ shop.currency }}";
+  window.assetsUrl = '{{ assets_url[0] }}';
+</script>
+{{ 'globo.recommendations.css' | asset_url | stylesheet_tag }}<script src="{{ 'globo.recommendations.js' | asset_url }}" data-instant-track type="text/javascript"></script>
+<script data-instant-track>
+  var globoPersonalizedRecommendations = new globoPersonalizedRecommendations({
+    apiUrl: "https://recommendation.globosoftware.net/api",
+    alternateApiUrl: "https://recommendation.globosoftware.net/",
+    shop: "{{ shop.permanent_domain }}",
+    shopNumber: 10325,
+    domain: "{{ shop.domain }}",
+    customer: {%-if customer-%}{{customer.id}}{%-else-%}null{%-endif-%},
+    page: '{{request.page_type}}',
+    translation: {"add_to_cart":"Add to cart","added_to_cart":"Added to cart","add_selected_to_cart":"Add selected to cart","added_selected_to_cart":"Added selected to cart","sale":"Sale","total_price":"Total price:","this_item":"This item:","sold_out":"Sold out"},
+    settings: {"redirect":true,"new_tab":true,"image_ratio":"400:400","hidden_tags":null,"exclude_tags":null,"carousel_autoplay":false,"carousel_items":5,"discount":{"enable":false,"condition":"any","type":"percentage","value":10},"sold_out":false,"carousel_loop":true,"visible_tags":null},
+    manualRecommendations: {},
+    boughtTogetherIds: {},
+    trendingProducts: {{shop.metafields.globo.trending | json}},
+    productBoughtTogether: {"type":"product_bought_together","enable":false,"title":{"text":"Frequently Bought Together","color":"#212121","fontSize":"25","align":"left"},"subtitle":{"text":"","color":"#212121","fontSize":"18"},"limit":10,"maxWidth":1170,"conditions":[{"id":"bought_together","status":1},{"id":"manual","status":1},{"id":"vendor","type":"same","status":1},{"id":"type","type":"same","status":1},{"id":"collection","type":"same","status":1},{"id":"tags","type":"same","status":1},{"id":"global","status":1}],"template":{"id":"2","elements":["price","addToCartBtn","variantSelector","saleLabel"],"productTitle":{"fontSize":"15","color":"#212121"},"productPrice":{"fontSize":"14","color":"#212121"},"productOldPrice":{"fontSize":16,"color":"#919191"},"button":{"fontSize":"14","color":"#ffffff","backgroundColor":"#212121"},"saleLabel":{"color":"#fff","backgroundColor":"#c00000"},"this_item":true,"selected":true},"random":false,"discount":true},
+    productRelated: {"type":"product_related","enable":true,"title":{"text":"YOU MAY ALSO LIKE","color":"#212121","fontSize":"20","align":"center"},"subtitle":{"text":null,"color":"#212121","fontSize":"18"},"limit":10,"maxWidth":1170,"conditions":[{"id":"manual","status":0},{"id":"bought_together","status":1},{"id":"vendor","type":"same","status":0},{"id":"type","type":"same","status":0},{"id":"collection","type":"same","status":1},{"id":"tags","type":"same","status":0},{"id":"global","status":1}],"template":{"id":"1","elements":["price","saleLabel"],"productTitle":{"fontSize":"15","color":"#212121"},"productPrice":{"fontSize":"14","color":"#212121"},"productOldPrice":{"fontSize":16,"color":"#919191"},"button":{"fontSize":"14","color":"#ffffff","backgroundColor":"#212121"},"saleLabel":{"color":"#fff","backgroundColor":"#c00000"},"this_item":false,"selected":false},"random":true,"discount":false},
+    cart: {"type":"cart","enable":false,"title":{"text":"Related products","color":"#212121","fontSize":"20","align":"left"},"subtitle":{"text":"","color":"#212121","fontSize":"18"},"limit":10,"maxWidth":1170,"conditions":[{"id":"manual","status":1},{"id":"bought_together","status":1},{"id":"tags","type":"same","status":1},{"id":"global","status":1}],"template":{"id":"3","elements":["price","addToCartBtn","variantSelector","saleLabel"],"productTitle":{"fontSize":"14","color":"#212121"},"productPrice":{"fontSize":"14","color":"#212121"},"productOldPrice":{"fontSize":16,"color":"#919191"},"button":{"fontSize":"15","color":"#ffffff","backgroundColor":"#212121"},"saleLabel":{"color":"#fff","backgroundColor":"#c00000"},"this_item":true,"selected":true},"random":false,"discount":false},
+    basis_collection_handle: {% if collections.all.id %}'globo_basis_collection'{% else %}'all'{% endif %},
+    widgets: [],
+    view_name: 'globo.recommendations',
+    cart_properties_name: '__is_bundle_product',
+    discounted_ids: [],
+    discount_min_amount: 0,
+    {%- if request.page_type == 'cart' -%}
+    data: {
+      ids: {{cart.items | map: 'product_id' | uniq | json}},
+      vendors: {{cart.items | map: 'vendor' | uniq | json}},
+      types: [],
+      tags: [],
+      collections: []
+    },
+    {%- elsif request.page_type == 'product' and product -%}
+    data: {
+      ids: ["{{product.id}}"],
+      vendors: [{{ product.vendor | json }}],
+      types: [{{ product.type | json }}],
+      tags: {{ product.tags | json }},
+      collections: []
+    },
+    {%-else-%}
+    data: {},
+    {%- endif -%}
+    {%- if request.page_type == 'product' and product -%}
+      product: {
+        id: "{{ product.id }}",
+        title: {{ product.title | json }},
+        handle: {{ product.handle | json }},
+        price: {{ product.price }},
+        compare_at_price: {% if product.compare_at_price %}{{ product.compare_at_price }}{% else %}null{% endif %},
+        images: [{% if product.featured_image %}"{{ product.featured_image | img_url: 'master' }}"{% endif %}],
+        variants: {{ product.variants | json }},
+        available: {{ product.available }},
+        vendor: {{ product.vendor | json }},
+        product_type: {{ product.type | json }},
+        tags: {{ product.tags | json }}
+      },
+    {%- endif -%}
+    no_image_url: "https://cdn.shopify.com/s/images/admin/no-image-large.gif"
+  });
+</script>
+<script data-instant-track>
+  {%- if request.page_type == 'product' and product -%}
+    {%- if collection -%}
+      globoPersonalizedRecommendations.data.collections.push({{collection.handle|json}});
+    {%- endif -%}
+    {%- if product.collections -%}
+    globoPersonalizedRecommendations.data.collections = globoPersonalizedRecommendations.data.collections.concat({{product.collections | map: 'handle' | json}});
+    {%- endif -%}
+    globoPersonalizedRecommendations.boughtTogetherIds[{{product.id | json}}] = {%- if product.metafields.globo.boughtTogetherIds -%}{{product.metafields.globo.boughtTogetherIds | json}}{%- else -%}false{%- endif -%};
+  {%- endif -%}
+
+  {%- if cart.items -%}
+    {%- for item in cart.items -%}
+
+      {%- if request.page_type == 'cart' -%}
+        {%- if item.product.type -%}
+        globoPersonalizedRecommendations.data.types.push({{item.product.type | json}});
+        {%- endif -%}
+        {%- if item.product.tags -%}
+        globoPersonalizedRecommendations.data.tags = globoPersonalizedRecommendations.data.tags.concat({{item.product.tags | json}});
+        {%- endif -%}
+        {%- if item.product.collections -%}
+        globoPersonalizedRecommendations.data.collections = globoPersonalizedRecommendations.data.collections.concat({{item.product.collections | map: 'handle' | json}});
+        {%- endif -%}
+        globoPersonalizedRecommendations.boughtTogetherIds[{{item.product_id | json}}] = {%- if item.product.metafields.globo.boughtTogetherIds -%}{{item.product.metafields.globo.boughtTogetherIds | json}}{%- else -%}false{%- endif -%};
+      {%- endif -%}
+
+      {%- for property in item.properties -%}
+        {%- if property.first == '__is_bundle_product' -%}
+          globoPersonalizedRecommendations.discount_min_amount += {{item.final_line_price}};
+          globoPersonalizedRecommendations.discounted_ids.push({{item.product_id | json}});
+          {%- break -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+    {%- endfor -%}
+  {% endif%}
+
+</script>
+<script src="{{ 'globo.recommendations.data.js' | asset_url }}" data-instant-track type="text/javascript"></script>
