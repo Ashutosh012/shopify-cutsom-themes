@@ -1,0 +1,517 @@
+<style type="text/css">
+  .slideshow_{{ section.id }} {visibility:hidden;}
+</style>
+
+<div data-section-id="{{ section.id }}" data-section-type="slideshow-section">
+  <section class="home-slideshow-layout">
+    <div class="home-slideshow-wrapper">
+      <div class="group-home-slideshow">
+        <div class="home-slideshow-inner">
+          <div class="home-slideshow-content slideshow_{{ section.id }} {% unless section.settings.responsive_mobile %}responsive-mobile{% else %}unresponsive{% endunless %}">
+            <ul>	
+              {% if section.blocks.size > 0 %}
+                {% for block in section.blocks %}
+                  {% if block.type == 'image' %}                
+                    {%- assign transition = block.settings.slideshow_transition -%}
+
+                    {%- assign slideshow_image = block.settings.slideshow_image -%}
+                    {%- assign image_alt = block.settings.slideshow_image.alt -%}
+
+                    {%- assign display_caption_image = block.settings.display_caption_image -%}
+              		{%- assign caption_image_style = block.settings.caption_image_style -%}
+                    {%- assign caption_image = block.settings.caption_image -%}
+              		{%- assign caption_image_transition = block.settings.caption_image_transition -%}
+              		{%- assign caption_image_link = block.settings.slideshow_image_link -%}
+              
+                    {%- assign display_caption_text = block.settings.display_caption_text -%}
+                    {%- assign caption_text = block.settings.caption_text -%}
+              		{%- assign caption_text_transition = block.settings.caption_text_transition -%}
+                    {%- assign button_1_slideshow = block.settings.button_1_slideshow -%}
+              		{%- assign button_1_link = block.settings.button_1_link -%}
+              		{%- assign button_2_slideshow = block.settings.button_2_slideshow -%}
+              		{%- assign button_2_link = block.settings.button_2_link -%}
+
+                    {% if block.settings.slideshow_image != blank %}
+                    <li data-index="rs-{{ forloop.index }}" data-transition="{{transition}}"  data-masterspeed="2000" data-saveperformance="on" style="background-color: {{ bg_color }}">                  
+                      <img src="{{ slideshow_image | img_url : '1920x' | split:'?v=' | first }}" data-lazyload="{{ slideshow_image | img_url : '1920x' | split:'?v=' | first }}"  alt="{{ image_alt }}" data-bgposition="center top" data-bgfit="cover" data-bgrepeat="no-repeat">
+                      {% if display_caption_image %}
+                      <div data-caption-image="true" class="style-{{ caption_image_style }} slideshow-caption transition-{{ caption_image_transition }}">
+                        <div class="group">
+                          <a href="{{ caption_image_link }}">
+                            <img src="{{ caption_image | img_url: '', crop: 'center' | split:'?v=' | first }}" alt="{{ caption_image.alt }}" />
+                          </a>   
+                        </div>                        
+                      </div>
+                      {% endif %}
+                      {% if display_caption_text %}
+                      <div data-caption-text="true" class="slideshow-caption transition-{{ caption_text_transition }}">
+                        <div class="slideshow-caption-group">
+                          <div class="caption-content">
+                          {{ caption_text }}
+                          </div>     
+                          <div class="caption-action">
+                            {% if button_1_slideshow != '' %}
+                            <a class="_btn " href="{{button_1_link}}" >{{ button_1_slideshow }}</a> 
+                            {% endif %}
+                            {% if button_2_slideshow != '' %}
+                            <a class="_btn " href="{{button_2_link}}" >{{ button_2_slideshow }}</a> 
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                      {% endif %}                      
+                    </li>
+                    {% else %}
+                      <li data-transition="{{transition}}"  data-masterspeed="2000" data-saveperformance="on" style="background-color: {{ bg_color }}">                  
+                        <img src="{{ '1920x1000.png' | asset_url }}" data-lazyload="{{ '1920x1000.png' | asset_url }}"  alt="{{ image_alt }}" data-bgposition="center top" data-bgfit="cover" data-bgrepeat="no-repeat">
+                      </li>
+                    {% endif %}
+                  {% else %}                
+                    {%- assign slideshow_video = block.settings.video_embed_code -%}
+                    {% if slideshow_video != blank %}
+                      <li data-transition="fade"  data-slotamount="7" data-masterspeed="2000" data-saveperformance="on"  data-title="Full-Width Video">
+                        <img src="{{ 'dummy.png' | asset_url }}" style='background-color:#000000' alt="" data-lazyload="{{ 'transparent.png' | asset_url }}" data-bgposition="center top" data-bgfit="cover" data-bgrepeat="no-repeat">                    
+                        <div class="tp-caption tp-fade stb fullscreenvideo"
+                             data-x="0"
+                             data-y="0"
+                             data-speed="500"
+                             data-start="1000"
+                             data-easing="Power1.easeOut"
+                             data-elementdelay="0.1"
+                             data-endelementdelay="0.1"
+                             data-endspeed="600"
+                             data-endeasing="Power1.easeOut"
+                             data-autoplay="true"
+                             data-autoplayonlyfirsttime="false"
+                             data-nextslideatend="true"
+                             data-forcerewind="on"
+                             style="z-index: 2;">
+                          {{slideshow_video}}
+                        </div>
+                      </li>
+                    {% endif %}           
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <li data-transition="{{transition}}"  data-masterspeed="2000" data-saveperformance="on">                  
+                  <img src="{{ '1920x1000.png' | asset_url }}" data-lazyload="{{ '1920x1000.png' | asset_url }}"  alt="{{ image_alt }}" data-bgposition="center top" data-bgfit="cover" data-bgrepeat="no-repeat">
+                </li>
+              {% endif %}
+            </ul>
+            <div class="tp-bannertimer"></div>
+          </div>
+        </div>
+      </div> 
+    </div>
+  </section>
+</div>
+<script type="text/javascript">
+  var slideshow;
+  jQuery(document).ready(function() {
+    slideshow = jQuery('.slideshow_{{ section.id }}').css('visibility', 'visible').show().revolution(
+      {
+        delay:{{section.settings.slideshow_speed}},
+        {% if section.settings.revolution_start_width != blank %}
+        startwidth:{{ section.settings.revolution_start_width }},
+        {% endif %}
+        {% if section.settings.revolution_start_height != blank %}
+        startheight:{{ section.settings.revolution_start_height }},
+        {% endif %}
+        autoHeight:"on",
+        navigationArrows:"solo",
+        {% if section.settings.full %}
+        sliderLayout:"fullscreen",
+        fullScreenOffsetContainer:"#topheader-to-offset",
+        stopAfterLoops:-1,
+        fullWidth:"on",
+        forceFullWidth:"on",
+        {% else %} 
+        fullWidth:"on",
+        fullScreen:"off",
+        stopAfterLoops:-1,
+        stopAtSlide:-1,
+        forceFullWidth:"off",
+        fullScreenOffsetContainer: "",                                               
+        {% endif %}
+        lazyLoad:"on"
+      });
+  });
+</script>
+{% schema %}
+{
+  "name": "Slideshow",
+  "class": "index-section index-section-slideshow",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "select",
+      "id": "slideshow_speed",
+      "label": "Show slideshow images for",
+      "options": [
+		{
+          "value": "900000000000000000000000000000000000",
+          "label": "Disable Auto Play"
+        },
+        {
+          "value": "8000",
+          "label": "8 seconds"
+        },
+        {
+          "value": "7000",
+          "label": "7 seconds"
+        },
+        {
+          "value": "6000",
+          "label": "6 seconds"
+        },
+        {
+          "value": "5000",
+          "label": "5 seconds"
+        },
+        {
+          "value": "4000",
+          "label": "4 seconds"
+        },
+        {
+          "value": "3000",
+          "label": "3 seconds"
+        },
+        {
+          "value": "2000",
+          "label": "2 seconds"
+        },
+        {
+          "value": "1000",
+          "label": "1 seconds"
+        }
+      ],
+      "default": "5000"
+    },
+    {
+      "type": "text",
+      "id": "revolution_start_width",
+      "label": "Start Width",
+      "info": "Please input width of Banner",
+      "default": "1920"
+    },
+    {
+      "type": "text",
+      "id": "revolution_start_height",
+      "label": "Start Height",
+      "info": "Please input height of Banner",
+      "default": "1000"
+    },
+    {
+      "type": "checkbox",
+      "id": "responsive_mobile",
+      "label": "Enable responsive mobile",
+      "default": false
+    }    
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image slide",
+      "settings": [
+        {
+          "type": "select",
+          "id": "slideshow_transition",
+          "options": [
+            {
+              "value": "slideup",
+              "label": "slideup"
+            },
+            {
+              "value": "slidedown",
+              "label": "slidedown"
+            },
+            {
+              "value": "slideright",
+              "label": "slideright"
+            },
+            {
+              "value": "slideleft",
+              "label": "slideleft"
+            },
+            {
+              "value": "slidehorizontal",
+              "label": "slidehorizontal"
+            },
+            {
+              "value": "slidevertical",
+              "label": "slidevertical"
+            },
+            {
+              "value": "boxslide",
+              "label": "boxslide"
+            },
+            {
+              "value": "slotslide-horizontal",
+              "label": "slotslide-horizontal"
+            },
+            {
+              "value": "slotslide-vertical",
+              "label": "slotslide-vertical"
+            },
+            {
+              "value": "boxfade",
+              "label": "boxfade"
+            },
+            {
+              "value": "slotfade-horizontal",
+              "label": "slotfade-horizontal"
+            },
+            {
+              "value": "slotfade-vertical",
+              "label": "slotfade-vertical"
+            },
+            {
+              "value": "fadefromright",
+              "label": "fadefromright"
+            },
+            {
+              "value": "fadefromleft",
+              "label": "fadefromleft"
+            },
+            {
+              "value": "fadefromtop",
+              "label": "fadefromtop"
+            },
+            {
+              "value": "fadefrombottom",
+              "label": "fadefrombottom"
+            },
+            {
+              "value": "fadetoleftfadefromright",
+              "label": "fadetoleftfadefromright"
+            },
+            {
+              "value": "fadetorightfadefromleft",
+              "label": "fadetorightfadefromleft"
+            },
+            {
+              "value": "fadetotopfadefrombottom",
+              "label": "fadetotopfadefrombottom"
+            },
+            {
+              "value": "fadetobottomfadefromtop",
+              "label": "fadetobottomfadefromtop"
+            },
+            {
+              "value": "parallaxtoright",
+              "label": "parallaxtoright"
+            },
+            {
+              "value": "parallaxtoleft",
+              "label": "parallaxtoleft"
+            },
+            {
+              "value": "parallaxtotop",
+              "label": "parallaxtotop"
+            },
+            {
+              "value": "parallaxtobottom",
+              "label": "parallaxtobottom"
+            },
+            {
+              "value": "scaledownfromright",
+              "label": "scaledownfromright"
+            },
+            {
+              "value": "scaledownfromleft",
+              "label": "scaledownfromleft"
+            },
+            {
+              "value": "scaledownfromtop",
+              "label": "scaledownfromtop"
+            },
+            {
+              "value": "scaledownfrombottom",
+              "label": "scaledownfrombottom"
+            },
+            {
+              "value": "zoomout",
+              "label": "zoomout"
+            },
+            {
+              "value": "zoomin",
+              "label": "zoomin"
+            },
+            {
+              "value": "slotzoom-horizontal",
+              "label": "slotzoom-horizontal"
+            },
+            {
+              "value": "slotzoom-vertical",
+              "label": "slotzoom-vertical"
+            },
+            {
+              "value": "fade",
+              "label": "fade"
+            },
+            {
+              "value": "random-static",
+              "label": "random-static"
+            }
+          ],
+          "label": "Transition Effects",
+          "default": "slideright"
+        },
+        {
+          "type": "image_picker",
+          "id": "slideshow_image",
+          "label": "Slideshow Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "display_caption_image",
+          "label": "Enable caption image"
+        },
+        {
+          "type": "image_picker",
+          "id": "caption_image",
+          "label": "Caption Image"
+        },
+		{
+          "type": "select",
+          "id": "caption_image_style",
+          "options": [
+            {
+              "value": "horizontal",
+              "label": "Horizontal"
+            },
+            {
+              "value": "vertical",
+              "label": "Vertical"
+            }
+          ],
+          "label": "Set Style for Image",
+          "default": "horizontal"
+        },
+		{
+          "type": "select",
+          "id": "caption_image_transition",
+          "options": [
+            {
+              "value": "slideup",
+              "label": "Slide Up"
+            },
+            {
+              "value": "slidedown",
+              "label": "Slide Down"
+            },
+            {
+              "value": "slideright",
+              "label": "Slide Right"
+            },
+            {
+              "value": "slideleft",
+              "label": "Slide Left"
+            },
+            {
+              "value": "fade",
+              "label": "Fade"
+            }
+          ],
+          "label": "Transition Effects",
+          "default": "fade"
+        },
+		{
+          "type": "url",
+          "id": "slideshow_image_link",
+          "label": "Caption Image Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "display_caption_text",
+          "label": "Enable caption text"
+        },
+        {
+          "type": "textarea",
+          "id": "caption_text",
+          "label": "Caption Text( HTML )"
+        }, 
+		{
+          "type": "select",
+          "id": "caption_text_transition",
+          "options": [
+            {
+              "value": "slideup",
+              "label": "Slide Up"
+            },
+            {
+              "value": "slidedown",
+              "label": "Slide Down"
+            },
+            {
+              "value": "slideright",
+              "label": "Slide Right"
+            },
+            {
+              "value": "slideleft",
+              "label": "Slide Left"
+            },
+            {
+              "value": "fade",
+              "label": "Fade"
+            }
+          ],
+          "label": "Transition Effects",
+          "default": "fade"
+        },
+        {
+          "type": "text",
+          "id": "button_1_slideshow",
+          "label": "Button 1: Action Text",
+		  "info": "Button with Caption Text"
+        },      
+        {
+          "type": "url",
+          "id": "button_1_link",
+          "label": "Button 1: Link"
+        },
+        {
+          "type": "text",
+          "id": "button_2_slideshow",
+          "label": "Button 2: Action Text",
+		  "info": "Button with Caption Text"
+        },      
+        {
+          "type": "url",
+          "id": "button_2_link",
+          "label": "Button 2: Link"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "Video slide",
+      "settings": [
+        {
+          "type": "text",
+          "id": "video_embed_code",
+          "label": "YouTube video embed code"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slideshow",
+      "category": "List Slideshow",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

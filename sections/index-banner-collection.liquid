@@ -1,0 +1,127 @@
+<div data-section-id="{{ section.id }}" data-section-type="banner-section">
+  {% if section.blocks.size > 0 %}
+  <section class="home-collection-layout">
+    <div class="home-collection-wraper">
+      <div style = "width:98%;" class="container">
+      <div class="row">
+        <div class="page-title">
+          <h2 class="title">{{ section.settings.title }}</h2>
+          <span class="caption">{{ section.settings.caption }}</span>
+        </div>
+        <div class="home-collection-inner">          
+          <div class="home-collection-content">
+            <div class="collection-group col-sm-4">
+              {% for block in section.blocks %}
+              	{% if block.settings.position == 'left' %}
+                  <div class="collection-item not-animated" data-animate="fadeInUp" data-delay="{{ forloop.index }}00">
+                    <div class="img_bg" {% if block.settings.image %} style="background-image:  url({{ block.settings.image | img_url: '', crop: '' | split:'?v=' | first }});"{% else %}style="background-image:  url({{'570x400.png' | asset_url}});"{% endif %}></div>
+                    <div class="banner-caption">
+                      {% if block.settings.action_text != '' %}
+                      <a href="{{ block.settings.link }}" class="_btn">{{ block.settings.action_text }}</a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <div class="collection-group col-sm-4">
+              {% for block in section.blocks %}
+              	{% if block.settings.position == 'middle' %}
+                  <div class="collection-item not-animated" data-animate="fadeInUp" data-delay="{{ forloop.index }}00">
+                    <div class="img_bg" {% if block.settings.image %} style="background-image:  url({{ block.settings.image | img_url: '', crop: '' | split:'?v=' | first }});"{% else %}style="background-image:  url({{'570x400.png' | asset_url}});"{% endif %}></div>
+                    <div class="banner-caption">
+                      {% if block.settings.action_text != '' %}
+                      <a href="{{ block.settings.link }}" class="_btn">{{ block.settings.action_text }}</a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+            <div class="collection-group col-sm-4">
+              {% for block in section.blocks %}
+              	{% if block.settings.position == 'right' %}
+                  <div class="collection-item not-animated" data-animate="fadeInUp" data-delay="{{ forloop.index }}00">
+                    <div class="img_bg" {% if block.settings.image %} style="background-image:  url({{ block.settings.image | img_url: '', crop: '' | split:'?v=' | first }});"{% else %}style="background-image:  url({{'570x400.png' | asset_url}});"{% endif %}></div>
+                    <div class="banner-caption">
+                      {% if block.settings.action_text != '' %}
+                      <a href="{{ block.settings.link }}" class="_btn">{{ block.settings.action_text }}</a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>     
+  </section>
+  {% endif %}
+</div>
+{% schema %}
+{
+  "name": "Banner Collections",
+  "class": "index-section index-section-banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+	{
+      "type": "textarea",
+      "id": "caption",
+      "label": "Caption"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+		{
+          "type": "select",
+          "id": "position",
+		  "label": "Set Position for Banner",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+			{
+              "value": "middle",
+              "label": "Middle"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "right"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Upload Image"
+        },
+		{
+          "type": "text",
+          "id": "action_text",
+          "label": "Action text"
+        },
+		{
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Banner Collections",
+    "category": "List Banner"
+  }]
+}
+{% endschema %}

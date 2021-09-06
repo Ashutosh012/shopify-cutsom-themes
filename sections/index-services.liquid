@@ -1,0 +1,92 @@
+<style>
+  .services-item .icon{
+    background-color: {{section.settings.color_icon_bg}};    
+  }
+  .services-item .icon:hover{
+    background-color: {{section.settings.color_icon_bg_hover}};    
+  }
+</style>
+<div data-section-id="{{ section.id }}" data-section-type="services-section">
+  {% if section.blocks.size > 0 %}
+  <section class="home-services-layout">
+    <div style = "width:98%;" class="container">
+      <div class="row">
+        <div class="home-services-inner">
+          <div class="home-services-content">
+            {% if section.blocks.size == 1 %}
+              {%- assign col = 'col-sm-12' -%}
+            {% elsif section.blocks.size == 2 %}
+              {%- assign col = 'col-sm-6' -%}
+            {% elsif section.blocks.size == 3 %}
+              {%- assign col = 'col-sm-4' -%}
+            {% else %}
+              {%- assign col = 'col-sm-3' -%}
+            {% endif %}
+            
+            {% for block in section.blocks %}
+            <div class="services-item {{ col }} not-animated" data-animate="fadeInUp" data-delay="{{ forloop.index }}00">
+              {% if block.settings.icon %}
+              <span class="icon">
+                <img src="{{ block.settings.icon | img_url: '', crop: '' | split:'?v=' | first }}" alt="{{ block.settings.icon.alt }}" title="{{ block.settings.icon.alt }}">
+              </span>              
+              {% endif %}
+              <div class="content">
+                <p class="title">{{ block.settings.title }}</p>
+                <p class="caption">{{ block.settings.caption }}</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>   
+  </section>
+  {% endif %}
+</div>
+{% schema %}
+{
+  "name": "Services",
+  "class": "index-section index-section-services",
+  "settings": [
+    {
+      "type": "color",
+      "id": "color_icon_bg",
+      "label": "Icon background Color",
+      "default": "#f7f9fa"
+    },
+    {
+      "type": "color",
+      "id": "color_icon_bg_hover",
+      "label": "Icon background color hover",
+      "default": "#ddb758"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Upload icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "caption",
+          "label": "Caption"
+        }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Services",
+    "category": "Store Information"
+  }]
+}
+{% endschema %}

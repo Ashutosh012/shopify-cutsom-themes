@@ -1,0 +1,75 @@
+<div data-section-id="{{ section.id }}" data-section-type="product-section">
+  <section class="home-product-layout">
+    <div style = "width:98%;" class="container">
+      <div class="row">
+        <div class="page-title">
+            <h2 class="title">{{ section.settings.title }}</h2>
+            <span class="caption">{{ section.settings.caption }}</span>
+          </div>
+        <div class="home-product-inner">              
+          <div class="home-product-content">
+            {% if section.settings.per_row == '3' %}
+            {%- assign col = 'col-sm-4' -%}
+            {% else %}
+            {%- assign col = 'col-sm-3' -%}
+            {% endif %}
+            {% for product in collections[section.settings.collection].products limit:section.settings.limit %} 
+            <div class="content-product {{ col }} not-animated" data-animate="fadeInUp" data-delay="{{ forloop.index }}00">
+              {% include 'index-proditem' %} 
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% schema %}
+{
+  "name": "Products",
+  "class": "index-section index-section-product",
+  "settings": [
+	{
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+	{
+      "type": "text",
+      "id": "caption",
+      "label": "caption"
+    },
+	{
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection product"
+    },
+    {
+      "type": "select",
+      "id": "per_row",
+      "label": "Products per row",
+      "options": [
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+      ],
+      "default": "4"
+    },
+	{
+      "type": "text",
+      "id": "limit",
+      "label": "Limit product show",
+	  "default":"8"
+    }
+  ],
+  "presets": [{
+    "name": "Products",
+    "category": "List Product"
+  }]
+}
+{% endschema %}

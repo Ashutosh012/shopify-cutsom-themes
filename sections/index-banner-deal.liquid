@@ -1,0 +1,150 @@
+<div data-section-id="{{ section.id }}" data-section-type="banner-section">
+  <section class="home-best-layout not-animated" data-animate="fadeInUp" data-delay="100" {% if section.settings.background %}style="background-image:  url({{ section.settings.background | img_url: '', crop: '' | split:'?v=' | first  }})"{% else %}style="background-image:  url({{ '1600x450.png' | asset_url | split:'?v=' | first }})"{% endif %}>
+    <div style = "" class="container">
+      <div class="row">
+        <div class="home-best-inner">
+          <div class="page-title">
+            <h2 class="title">{{ section.settings.title }}</h2>
+            <span class="caption">{{ section.settings.caption }}</span>
+          </div>
+          <div class="home-best-content">
+            <div class="best-caption">
+              <div class="caption-content">
+                <p class="title">{{ section.settings.pk_title }}</p>
+                <div class="caption-group">
+                  {{ section.settings.pk_caption }}
+                </div>
+                <a href="{{ section.settings.link }}" class="_btn">{{ section.settings.action_text }}</a>
+              </div>
+            </div>
+            <div class="best-datetime">
+              {% if section.settings.image %}
+              <img class="image" src="{{ section.settings.image | img_url: '', crop: '' | split:'?v=' | first }}" alt="{{ section.settings.image.alt }}" title="{{ section.settings.image.alt }}">
+              {% endif %}
+              <div class="datetime datetime_{{ section.id }}">
+                <div class="date-item date-days"></div>
+                <div class="date-item date-hours"></div>
+                <div class="date-item date-minutes"></div>
+                <div class="date-item date-seconds"></div>
+              </div>
+            </div>
+          </div>
+        </div>  
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+  $(document).ready(function(){
+    
+    var date1=new Date('{{section.settings.datetime}}');
+    var date2=new Date('{{ 'now' | date: "%m/%d/%Y %T" }}');
+    function addZ(n) {
+      return (n<10? '0':'') + n;
+    }
+    function convert_hrs(hrs){
+      return (hrs<24? hrs:(hrs-24));
+    }
+
+    function showdate(days,hours,minutes,seconds){
+      $('.datetime_{{ section.id }} .date-days').html('<div class="group"><p>' + days + '</p>' + '<span class="text">Tage</span></div>');
+      $('.datetime_{{ section.id }} .date-hours').html('<div class="group"><p>' + hours + '</p>' + '<span class="text">Stunden</span></div>');
+      $('.datetime_{{ section.id }} .date-minutes').html('<div class="group"><p>' + minutes + '</p>' + '<span class="text">Minuten</span></div>');
+      $('.datetime_{{ section.id }} .date-seconds').html('<div class="group"><p>' + seconds + '</p>' + '<span class="text">Sekunden</span></div>');
+    }
+    
+    var milli1=date1-date2;
+       
+    var interval = setInterval(function() {
+      var milli=milli1;
+      if(milli1<0){
+        showdate('00','00','00','00');
+        clearInterval(interval);
+        return false;
+      }
+      var ms = milli % 1000;
+      milli = (milli - ms) / 1000;
+      var days = Math.floor(milli / 86400);
+      milli -= days * 86400;
+
+      var hours = Math.floor(milli / 3600) % 24;
+      milli -= hours * 3600;
+
+      var minutes = Math.floor(milli / 60) % 60;
+      milli -= minutes * 60;
+
+      var seconds = milli % 60;
+	
+      showdate(days,hours,minutes,seconds);
+
+      if (days == 0 && hours == 0 && minutes == 0 && seconds == 0)
+        clearInterval(interval);
+      milli1=milli1-1000;
+
+    }, 1000);
+      
+  });
+  
+</script>
+{% schema %}
+{
+  "name": "Best Sale",
+  "class": "index-section index-section-best",
+  "settings": [
+	{
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "caption",
+      "label": "Caption"
+    },
+	{
+      "type": "image_picker",
+      "id": "background",
+      "label": "Upload background"
+    },
+	{
+      "type": "header",
+      "content": "Content Section"
+    },
+	{
+      "type": "text",
+      "id": "pk_title",
+      "label": "Title Section"
+    },
+	{
+      "type": "textarea",
+      "id": "pk_caption",
+      "label": "Caption Section( HTML )"
+    },
+	{
+      "type": "text",
+      "id": "action_text",
+      "label": "Action text"
+	},
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+	{
+      "type": "text",
+      "id": "datetime",
+      "label": "Datetime",
+      "info": "m\/d\/YYYY H:M:S"
+	},
+	{
+      "type": "image_picker",
+      "id": "image",
+      "label": "Upload image Datetime"
+    }
+  ],
+  "presets": [{
+    "name": "Best Sale",
+    "category": "List Banner"
+  }]
+}
+{% endschema %}

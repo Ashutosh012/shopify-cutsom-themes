@@ -1,0 +1,62 @@
+<div data-section-id="{{ section.id }}" data-section-type="instagram-section">
+  <section style = "width:98%;" class="home-instagram-layout not-animated" data-animate="fadeInUp" data-delay="100">
+    <div style = "width:98%;" class="home-instagram-inner">
+      <div class="home-instagram-content">
+        <div class="instagram-caption">
+          <h2 class="title">{{ section.settings.title }}</h2>
+          <p class="user">{{ section.settings.user_name }}</p>
+        </div>
+        <div id="instafeed" class="instagram-content">
+        </div>
+      </div>
+    </div>          
+  </section>
+</div>
+<script type="text/javascript">
+  var feed = new Instafeed({
+    get: 'user',
+    userId: {{ section.settings.instagram_id }},
+    accessToken: '{{ section.settings.accesstoken }}',
+    resolution: 'low_resolution',
+    limit : {{ section.settings.limit }}
+  });
+  feed.run();
+</script>
+{% schema %}
+{
+"name": "Instagram",
+"class": "index-section index-section-instagram",
+"settings": [
+{
+"type": "text",
+"id": "title",
+"label": "Title"
+},
+{
+"type": "text",
+"id": "user_name",
+"label": "User Name"
+},
+{
+"type": "text",
+"id": "instagram_id",
+"label": "User ID",
+"info": "this is User ID, not user name"
+},
+{
+"type": "text",
+"id": "accesstoken",
+"label": "accessToken"
+},
+{
+"type": "text",
+"id": "limit",
+"label": "Limit image"
+}
+],
+"presets": [{
+"name": "Instagram",
+"category": "Store Information"
+}]
+}
+{% endschema %}

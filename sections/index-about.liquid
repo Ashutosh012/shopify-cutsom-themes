@@ -1,0 +1,68 @@
+<div data-section-id="{{ section.id }}" data-section-type="about-section">
+  <section class="home-about-layout not-animated" data-animate="fadeInUp" data-delay="100">
+    <div style = "" class="container">
+      <div class="row">
+        <div class="home-about-inner">
+          {% if section.settings.image %}
+          <div class="home-about-decor">
+            <img src="{{ section.settings.image | img_url: '', crop: '' | split:'?v=' | first }}" alt="{{ section.settings.image.alt }}" title="{{ section.settings.image.alt }}">
+          </div>
+          {% endif %}
+          <div class="home-about-content">
+            <div class="about-left">
+              <h2 class="title">{{ section.settings.title }}</h2>
+              <p class="caption">{{ section.settings.caption }}</p>
+            </div>
+            <div class="about-right">
+              <p class="info">{{ section.settings.info }}</p>
+              <p class="name">{{ section.settings.name }}</p>
+              <p class="position">{{ section.settings.position }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>   
+  </section>
+</div>
+{% schema %}
+{
+  "name": "About Us",
+  "class": "index-section index-section-about",
+  "settings": [
+	{
+      "type": "image_picker",
+      "id": "image",
+      "label": "Upload image Decor"
+    },
+	{
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+	{
+      "type": "text",
+      "id": "caption",
+      "label": "Caption"
+    },
+	{
+      "type": "textarea",
+      "id": "info",
+      "label": "Information"
+    },
+    {
+      "type": "text",
+      "id": "name",
+      "label": "Name"
+    },
+    {
+      "type": "text",
+      "id": "position",
+      "label": "Position"
+    }
+  ],
+  "presets": [{
+    "name": "About Us",
+    "category": "Store Information"
+  }]
+}
+{% endschema %}

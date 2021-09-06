@@ -1,0 +1,87 @@
+<div data-section-id="{{ section.id }}" data-section-type="banner-section">
+  {% if section.blocks.size > 0 %}
+  <section class="home-banner-layout">
+    <div style = "width:98%;" class="container">
+      <div class="row">    
+        <div class="home-banner-inner">
+          <div class="home-banner-content">
+			{% if section.blocks.size == 1 %}
+              {%- assign col = 'col-sm-12' -%}
+            {% elsif section.blocks.size == 2 %}
+              {%- assign col = 'col-sm-6' -%}
+            {% else %}
+              {%- assign col = 'col-sm-4' -%}
+            {% endif %}
+            
+            {% for block in section.blocks %}
+            <div class="banner-item {{ col }} not-animated" data-animate="fadeInUp" data-delay="{{ forloop.index }}00">
+              <a href="{{ block.settings.link }}">
+                <img src="{{ block.settings.image | img_url: '', crop: '' | split:'?v=' | first }}" alt="{{ block.settings.image.alt }}" title="{{ block.settings.image.alt }}">
+              </a>
+              <div class="banner-caption {{ block.settings.style }}">
+                <p class="title">{{ block.settings.title }}</p>
+                <p class="caption">{{ block.settings.caption }}</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>        
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% schema %}
+{
+  "name": "Banner",
+  "class": "index-section index-section-banner",
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Upload image"
+        },
+		{
+          "type": "select",
+          "id": "style",
+		  "label": "Set Style for Caption",
+          "options": [
+            {
+              "value": "style-1",
+              "label": "Style 1"
+            },
+            {
+              "value": "style-2",
+              "label": "Style 2"
+            }
+          ],
+          "default": "style-1"
+        },
+		{
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+		{
+          "type": "text",
+          "id": "caption",
+          "label": "Caption"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Banner",
+    "category": "List Banner"
+  }]
+}
+{% endschema %}
